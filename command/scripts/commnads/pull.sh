@@ -1,15 +1,15 @@
 function sub_help
 {
-    echo "docker push for $Docker"
+    echo "docker pull for $Docker"
     echo
     echo "Example:"
-    echo "  # push default for $DefaultTag"
+    echo "  # pull default for $DefaultTag"
     echo "  $Command"
     echo
-    echo "  # push dir"
+    echo "  # pull dir"
     echo "  $Command $dockerfile"
     echo
-    echo "  # push all dir"
+    echo "  # pull all dir"
     echo "  $Command -a"
     echo 
     echo "Usage:"
@@ -17,7 +17,7 @@ function sub_help
     echo
     echo "Flags:"
     my_PrintFlag "-h, --help" "help for $Command"
-    my_PrintFlag "-a, --all" "push all ( $dockerfile)"
+    my_PrintFlag "-a, --all" "pull all ( $dockerfile)"
     my_PrintFlag "-t, --test" "print the executed command, but don't actually execute it"
 }
 function sub_command
@@ -56,14 +56,14 @@ function sub_command
     if [[ $all == 1 ]];then
         for dir in ${dockerfile[@]}
         do
-            my_DockerPush "$dir"
+            my_DockerPull "$dir"
         done
     elif [[ ${#@} == 0 ]];then
-        my_DockerPush "$DefaultTag"
+        my_DockerPull "$DefaultTag"
     else
         for dir in "$@"
         do
-            my_DockerPush "$dir"
+            my_DockerPull "$dir"
         done
     fi
 }

@@ -1,15 +1,15 @@
 function sub_help
 {
-    echo "docker push for $Docker"
+    echo "docker rm for $Docker"
     echo
     echo "Example:"
-    echo "  # push default for $DefaultTag"
+    echo "  # rm default for $DefaultTag"
     echo "  $Command"
     echo
-    echo "  # push dir"
+    echo "  # rm by dir"
     echo "  $Command $dockerfile"
     echo
-    echo "  # push all dir"
+    echo "  # rm all"
     echo "  $Command -a"
     echo 
     echo "Usage:"
@@ -17,14 +17,16 @@ function sub_help
     echo
     echo "Flags:"
     my_PrintFlag "-h, --help" "help for $Command"
-    my_PrintFlag "-a, --all" "push all ( $dockerfile)"
+    my_PrintFlag "-f, --force" "force rm"
+    my_PrintFlag "-a, --all" "rm all ( $dockerfile)"
     my_PrintFlag "-t, --test" "print the executed command, but don't actually execute it"
 }
 function sub_command
 {
-    local args=`getopt -o hat --long help,all,test -n "$Command" -- "$@"`
+    local args=`getopt -o hatf --long help,all,test,force -n "$Command" -- "$@"`
     eval set -- "${args}"
     local all=0
+    local force=0
     TEST=0
     while true
     do
@@ -33,13 +35,17 @@ function sub_command
                 sub_help
                 return $?
             ;;
-            -a|--all)
-                shift
-                all=1
-            ;;
             -t|--test)
                 shift
                 TEST=1
+            ;;
+            -f|--force)
+                shift
+                force=1
+            ;;
+            -a|--all)
+                shift
+                all=1
             ;;
             --)
                 shift
@@ -52,18 +58,17 @@ function sub_command
             ;;
         esac
     done
-    local dir
     if [[ $all == 1 ]];then
-        for dir in ${dockerfile[@]}
-        do
-            my_DockerPush "$dir"
+        for arg in ${dockerfile[@]}; do
+            my_DockerRM "$arg" $force
         done
     elif [[ ${#@} == 0 ]];then
-        my_DockerPush "$DefaultTag"
+        my_DockerRM "$DefaultTag" $force
+    elif [[ ${#@} == 1 ]];then
+        my_DockerRM "$1" $force
     else
-        for dir in "$@"
-        do
-            my_DockerPush "$dir"
+        for arg in "$@"; do
+            my_DockerRM "$arg" $force
         done
     fi
 }

@@ -94,3 +94,113 @@ function docker_run
         -e LC_ALL=C.UTF-8 \
         "$1"
 }
+
+function my_DockerLogs
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    echo "sudo docker logs \"$DockerVarName\""
+    if [[ $TEST == 0 ]];then
+        sudo docker logs "$DockerVarName"
+    fi
+}
+function my_DockerLogs
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    echo "sudo docker logs \"$DockerVarName\""
+    if [[ $TEST == 0 ]];then
+        sudo docker logs "$DockerVarName"
+    fi
+}
+function my_DockerStart
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    echo "sudo docker start \"$DockerVarName\""
+    if [[ $TEST == 0 ]];then
+        sudo docker start "$DockerVarName"
+    fi
+}
+function my_DockerStop
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    echo "sudo docker stop \"$DockerVarName\""
+    if [[ $TEST == 0 ]];then
+        sudo docker stop "$DockerVarName"
+    fi
+}
+function my_DockerRestart
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    echo "sudo docker restart \"$DockerVarName\""
+    if [[ $TEST == 0 ]];then
+        sudo docker restart "$DockerVarName"
+    fi
+}
+function my_DockerInspect
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    echo "sudo docker inspect \"$DockerVarName\""
+    if [[ $TEST == 0 ]];then
+        sudo docker inspect "$DockerVarName"
+    fi
+}
+function my_DockerRM
+{
+    my_CheckDockerfile "$1"
+
+    my_LoadENV "$1"
+
+    if [[ $2 == 1 ]];then
+        echo "sudo docker rm -f \"$DockerVarName\""
+        if [[ $TEST == 0 ]];then
+            sudo docker rm -f "$DockerVarName"
+        fi
+    else
+        echo "sudo docker rm \"$DockerVarName\""
+        if [[ $TEST == 0 ]];then
+            sudo docker rm "$DockerVarName"
+        fi
+    fi
+}
+
+# * $1 dirname
+function my_DockerPush
+{
+    my_CheckDockerfile "$1"
+    my_LoadENV "$1"
+
+    echo "sudo docker push \"$Docker:$TAG\""
+
+    if [[ $TEST == 0 ]];then
+        sudo docker push "$Docker:$TAG"
+    fi
+}
+# * $1 dirname
+function my_DockerPull
+{
+    my_CheckDockerfile "$1"
+    my_LoadENV "$1"
+
+    echo "sudo docker pull \"$Docker:$TAG\""
+
+    if [[ $TEST == 0 ]];then
+        sudo docker pull "$Docker:$TAG"
+    fi
+}

@@ -1,15 +1,15 @@
 function sub_help
 {
-    echo "docker push for $Docker"
+    echo "docker inspect for $Docker"
     echo
     echo "Example:"
-    echo "  # push default for $DefaultTag"
+    echo "  # inspect default for $DefaultTag"
     echo "  $Command"
     echo
-    echo "  # push dir"
+    echo "  # inspect by dir"
     echo "  $Command $dockerfile"
     echo
-    echo "  # push all dir"
+    echo "  # inspect all"
     echo "  $Command -a"
     echo 
     echo "Usage:"
@@ -17,7 +17,7 @@ function sub_help
     echo
     echo "Flags:"
     my_PrintFlag "-h, --help" "help for $Command"
-    my_PrintFlag "-a, --all" "push all ( $dockerfile)"
+    my_PrintFlag "-a, --all" "inspect all ( $dockerfile)"
     my_PrintFlag "-t, --test" "print the executed command, but don't actually execute it"
 }
 function sub_command
@@ -33,13 +33,13 @@ function sub_command
                 sub_help
                 return $?
             ;;
-            -a|--all)
-                shift
-                all=1
-            ;;
             -t|--test)
                 shift
                 TEST=1
+            ;;
+            -a|--all)
+                shift
+                all=1
             ;;
             --)
                 shift
@@ -52,18 +52,17 @@ function sub_command
             ;;
         esac
     done
-    local dir
     if [[ $all == 1 ]];then
-        for dir in ${dockerfile[@]}
-        do
-            my_DockerPush "$dir"
+        for arg in ${dockerfile[@]}; do
+            my_DockerInspect "$arg"
         done
     elif [[ ${#@} == 0 ]];then
-        my_DockerPush "$DefaultTag"
+        my_DockerInspect "$DefaultTag"
+    elif [[ ${#@} == 1 ]];then
+        my_DockerInspect "$1"
     else
-        for dir in "$@"
-        do
-            my_DockerPush "$dir"
+        for arg in "$@"; do
+            my_DockerInspect "$arg"
         done
     fi
 }

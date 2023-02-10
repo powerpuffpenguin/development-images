@@ -77,9 +77,17 @@ function display_help
     echo "Available Commands:"
 
    my_PrintFlag "build"  "docker build for $Docker"
-   my_PrintFlag "images"  "docker images for $Docker"
-   my_PrintFlag "run"  "docker run for $Docker"
    my_PrintFlag "exec"  "docker exec for $Docker"
+   my_PrintFlag "images"  "docker images for $Docker"
+   my_PrintFlag "inspect"  "docker inspect for $Docker"
+   my_PrintFlag "logs"  "docker logs for $Docker"
+   my_PrintFlag "pull"  "docker pull for $Docker"
+   my_PrintFlag "push"  "docker push for $Docker"
+   my_PrintFlag "restart"  "docker restart for $Docker"
+   my_PrintFlag "rm"  "docker rm for $Docker"
+   my_PrintFlag "run"  "docker run for $Docker"
+   my_PrintFlag "start"  "docker start for $Docker"
+   my_PrintFlag "stop"  "docker stop for $Docker"
 
     echo
     echo "Flags:"
