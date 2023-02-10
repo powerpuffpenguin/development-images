@@ -81,6 +81,7 @@ function display_help
    my_PrintFlag "images"  "docker images for $Docker"
    my_PrintFlag "inspect"  "docker inspect for $Docker"
    my_PrintFlag "logs"  "docker logs for $Docker"
+   my_PrintFlag "ps"  "docker ps for $Docker"
    my_PrintFlag "pull"  "docker pull for $Docker"
    my_PrintFlag "push"  "docker push for $Docker"
    my_PrintFlag "restart"  "docker restart for $Docker"
@@ -92,6 +93,7 @@ function display_help
     echo
     echo "Flags:"
     my_PrintFlag "-h, --help" "help for $Command"
+   my_PrintFlag "-l, --list" "list dockerfile dir"
 }
 # 實現主函數
 function main
@@ -99,6 +101,12 @@ function main
    case "$1" in
       -h|--help)
          display_help
+         return $?
+      ;;
+      -l|--list)
+         for file in ${dockerfile[@]}; do
+            echo "$file"
+         done
          return $?
       ;;
       *)

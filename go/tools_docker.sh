@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+# 設置顯示的命令名稱
+CommandName="tools_docker.sh"
 
 # 項目根路徑
 cd `dirname $BASH_SOURCE`

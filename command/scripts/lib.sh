@@ -79,7 +79,23 @@ function my_DockerImages
     else
         echo "sudo docker images | grep -w \"$Docker \" | egrep -w \"$1\""
         if [[ $TEST == 0 ]];then
-            sudo docker images | grep -w "$Docker " | egrep -w "$1"
+            echo 'REPOSITORY                                       TAG             IMAGE ID       CREATED         SIZE'
+           sudo docker images | grep -w "$Docker " | egrep -w "$1"
+        fi
+    fi
+}
+function my_DockerPS
+{
+    if [[ "$1" == "" ]];then
+        echo "sudo docker ps -a | grep -w \"$Docker\""
+        if [[ $TEST == 0 ]];then
+            sudo docker ps -a | grep -w "$Docker "
+        fi
+    else
+        echo "sudo docker ps -a | grep -w \"$Docker \" | egrep -w \"$1\""
+        if [[ $TEST == 0 ]];then
+            echo 'CONTAINER ID   IMAGE                   COMMAND                  CREATED         STATUS        PORTS'
+            sudo docker ps -a | grep -w "$Docker " | egrep -w "$1"
         fi
     fi
 }
