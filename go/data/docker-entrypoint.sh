@@ -15,16 +15,19 @@ function set_uid
     echo "dev:x:$PUID:$PGID::/home/dev:/bin/bash" >> /tmp/fix
     mv /tmp/fix /etc/passwd
 }
-
-function change_owner() {
-    chown dev.dev /opt/google/golib -R
+function change_owner_dir
+{
+    if [[ -d "$1" ]];then
+        if ! ls "$1" -l | egrep -wq "dev[ ]+dev";then
+            chown dev.dev "$1" -R
+        fi
+    fi
+}
+function change_owner 
+{
+    change_owner_dir /opt/google/golib 
 
     # home
-    find /home/dev -maxdepth 1 -type f,d | while read file
-    do
-        chown dev.dev "$file"
-    done
-
     local dirs=(
         .cache
         .config
@@ -33,9 +36,12 @@ function change_owner() {
     )
     local dir
     for dir in "${dirs[@]}"; do
-        if [[ -d "/home/dev/$dir" ]];then
-            chown dev.dev "/home/dev/$dir" -R
-        fi
+        change_owner_dir "/home/dev/$dir"
+    done
+
+    find /home/dev -maxdepth 1 -type f,d | while read file
+    do
+        chown dev.dev "$file"
     done
 }
 function exec_serve
@@ -65,9 +71,15 @@ function exec_serve
         i=i+1
     fi
 
-    "${args[@]}"
+    exec "${args[@]}"
 }
-if [[ "$@" == "default-command" ]];then
+function exec_init 
+{
+    if [[ -f /etc/init_success_flag_if_not_exists_retry_init ]];then
+        # has been executed and is not being executed 
+        return 0
+    fi
+
     # fix uid gid
     if ! grep -wq "^dev:x:$PGID:" /etc/group;then
         set_gid
@@ -77,7 +89,12 @@ if [[ "$@" == "default-command" ]];then
     fi
     # change owner
     change_owner
-    
+
+    # set success flag
+    touch /etc/init_success_flag_if_not_exists_retry_init
+}
+if [[ "$@" == "default-command" ]];then    
+    exec_init
     exec_serve
 else
     exec "$@"

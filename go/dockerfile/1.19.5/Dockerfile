@@ -25,6 +25,63 @@ RUN set -eux; \
     rm /a.tar.gz;
 
 
+# 安裝開發用到的庫和工具
+RUN set -eux; \
+    # jsonnet, googel 開源的 json 的擴展格式很適合作爲配置檔案
+    curl -#Lo /a.tar.gz https://github.com/google/jsonnet/releases/download/v0.17.0/jsonnet-bin-v0.17.0-linux.tar.gz; \
+    tar -zxvf /a.tar.gz -C /usr/local/bin; \
+    chmod a+x /usr/local/bin/jsonnet; \
+    chmod a+x /usr/local/bin/jsonnetfmt; \
+    rm /a.tar.gz; \
+    # protocol buffer, grpc 依賴
+    curl -#Lo /a.zip https://github.com/protocolbuffers/protobuf/releases/download/v21.11/protoc-21.11-linux-x86_64.zip; \
+    unzip -d /pb /a.zip;\
+    chmod a+x /pb/bin/protoc; \
+    cp /pb/bin/protoc /usr/local/bin/; \
+    cp /pb/include/google /usr/local/include/ -r; \
+    chmod a+rx /usr/local/include -R; \
+    chmod a-x /usr/local/include/google/protobuf/*.proto; \
+    chmod a-x /usr/local/include/google/protobuf/compiler/*.proto; \
+    rm /a.zip; \
+    rm /pb -rf; \
+    # gateway openapiv2, 自動爲 grpc 生成 http 接口文檔
+    curl -#Lo /usr/local/bin/protoc-gen-grpc-gateway https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v2.15.0/protoc-gen-grpc-gateway-v2.15.0-linux-x86_64; \
+    curl -#Lo /usr/local/bin/protoc-gen-openapiv2 https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v2.15.0/protoc-gen-openapiv2-v2.15.0-linux-x86_64; \
+    chmod a+x /usr/local/bin/protoc-gen-grpc-gateway; \
+    chmod a+x /usr/local/bin/protoc-gen-openapiv2; \
+    # 安裝 vscode 插件
+    gosu dev /opt/code-server/bin/code-server --install-extension heptio.Jsonnet; \
+    gosu dev /opt/code-server/bin/code-server --install-extension zxh404.vscode-proto3; \
+    gosu dev /opt/code-server/bin/code-server --install-extension golang.Go; \
+    echo ok;
+
+RUN set -eux; \
+    # golang 開發依賴
+    chown dev.dev /opt/google/golib; \
+    gosu dev  go install -v github.com/cweill/gotests/gotests@v1.6.0; \
+    gosu dev  go install -v github.com/fatih/gomodifytags@v1.16.0; \
+    gosu dev  go install -v github.com/josharian/impl@v1.1.0; \
+    gosu dev  go install -v github.com/haya14busa/goplay/cmd/goplay@v1.0.0; \
+    gosu dev  go install -v github.com/go-delve/delve/cmd/dlv@latest; \
+    gosu dev  go install -v honnef.co/go/tools/cmd/staticcheck@latest; \
+    gosu dev  go install -v golang.org/x/tools/gopls@latest; \
+    # grpc
+    gosu dev go install github.com/golang/protobuf/protoc-gen-go@latest; \
+    gosu dev go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest; \
+    # 刪除安裝緩存
+    rm /home/dev/.cache -rf; \
+    # 設定 code-server 用戶配置
+    echo '{' > /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "jsonnet.outputFormat": "json",' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "files.associations": {' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "*.json": "jsonc"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    },' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "editor.formatOnSave": true,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "editor.fontSize": 24,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "workbench.colorTheme": "Default Dark+"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '}' >> /home/dev/.local/share/code-server/User/settings.json; \
+    chown dev.dev  /home/dev/.local/share/code-server/User/settings.json;
+
 
 
 # 項目根路徑
