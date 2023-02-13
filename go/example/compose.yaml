@@ -1,4 +1,3 @@
-version: '1'
 services:
   code:
     image: king011/dev-go:1.19.5

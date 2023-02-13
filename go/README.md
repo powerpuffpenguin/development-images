@@ -36,7 +36,6 @@ PUID 和 PGID 環境變量，這樣容器也會初次運行時自動將容器中
 [example](example) 檔案夾包含了一個使用本容器進行開發的例子
 
 ```
-version: '1'
 services:
   code:
     image: king011/dev-go:1.19.5
@@ -57,7 +56,7 @@ services:
       - PASSWORD=123
   # xray 容器用於管理網路，設置透明代理，突破朝鮮網路封鎖
   xray:
-    image: king011/v2ray-web:v1.7.3
+    image: king011/v2ray-web:v1.7.4
     restart: always
     cap_add: # 設置上這兩個特權才能在容器中使用 iptables 設置透明代理
       - NET_ADMIN

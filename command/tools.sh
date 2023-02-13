@@ -68,13 +68,13 @@ fi
 # 顯示幫助
 function display_help
 {
-    echo "$Command script"
-    echo
-    echo "Usage:"
-    echo "  $Command [flags]"
-    echo "  $Command [command]"
-    echo
-    echo "Available Commands:"
+   echo "$Command script"
+   echo
+   echo "Usage:"
+   echo "  $Command [flags]"
+   echo "  $Command [command]"
+   echo
+   echo "Available Commands:"
 
    my_PrintFlag "build"  "docker build for $Docker"
    my_PrintFlag "exec"  "docker exec for $Docker"
@@ -90,9 +90,9 @@ function display_help
    my_PrintFlag "start"  "docker start for $Docker"
    my_PrintFlag "stop"  "docker stop for $Docker"
 
-    echo
-    echo "Flags:"
-    my_PrintFlag "-h, --help" "help for $Command"
+   echo
+   echo "Flags:"
+   my_PrintFlag "-h, --help" "help for $Command"
    my_PrintFlag "-l, --list" "list dockerfile dir"
 }
 # 實現主函數
