@@ -35,5 +35,5 @@ RUN set -eux; \
 # * git 66M 使用容器提交代碼
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y --no-install-recommends dnsutils vim git; \
+    apt-get install -y --no-install-recommends dnsutils vim git openssh-client; \
     rm -rf /var/lib/apt/lists/*
