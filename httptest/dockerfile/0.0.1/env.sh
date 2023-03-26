@@ -2,7 +2,14 @@ DockerVarName="test-httptest-0.0.1"
 DockerVarUser="dev"
 function before_build
 {
-    cp "$ProjectDir/httptest" httptest.temp
+    if  [[ -d root ]];then
+        rm root -rf
+    fi
+    mkdir root/usr/local/bin -p
+    cp "$ProjectDir/httptest" root/usr/local/bin/
+    cp "$ProjectDir/test.crt" root/
+    cp "$ProjectDir/test.key" root/
+    
 }
 # * $1 images
 # * $2 name
@@ -13,8 +20,7 @@ function docker_run
         -e TZ=Asia/Shanghai \
         -e LANG=C.UTF-8 \
         -e LC_ALL=C.UTF-8 \
-        -e BIND_ADDR=0.0.0.0:9000 \
-        --network host \
-        -it "$1" sh
-        # -d "$1"
+        -p 9000:80 \
+        -p 9001:443 \
+        -d "$1"
 }

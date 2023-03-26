@@ -1,4 +1,4 @@
 from alpine:3.17
-Copy httptest.temp /usr/local/bin/httptest
-EXPOSE 80
-CMD ["httptest"]
+Copy root/ /
+EXPOSE 80 443
+CMD ["httptest","-h2c",":80","-h2",":443"]
