@@ -2,19 +2,17 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
+	"crypto/tls"
+	"encoding/base64"
+	"encoding/hex"
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"net"
-	"net/http"
 	"os"
-	"runtime"
-	"time"
+	"strings"
+	"sync"
 
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
+	"github.com/gorilla/websocket"
 )
 
 const (
@@ -23,89 +21,167 @@ const (
 
 func main() {
 	var (
-		help                    bool
-		addr, certFile, keyFile string
+		help                       bool
+		h2c, h2, certFile, keyFile string
+		url                        string
 	)
 	flag.BoolVar(&help, "help", false, "display help")
-	flag.StringVar(&addr, "addr", ":80", "http listen address")
-	flag.StringVar(&certFile, "cert", "", "x509 cert file path")
-	flag.StringVar(&keyFile, "key", "", "x509 key file path")
+	flag.StringVar(&h2c, "h2c", "", "listen address and start a h2c server")
+	flag.StringVar(&h2, "h2", "", "listen address and start a h2 server")
+	flag.StringVar(&certFile, "cert", "test.crt", "x509 cert file path for h2 server")
+	flag.StringVar(&keyFile, "key", "test.key", "x509 key file path for h2 server")
+	flag.StringVar(&url, "url", "", "use websocket connect url")
+
 	flag.Parse()
 	if help {
 		flag.PrintDefaults()
 		return
-	}
-	l, e := net.Listen("tcp", addr)
-	if e != nil {
-		log.Fatalln(e)
-	}
-
-	var (
-		mux    = http.NewServeMux()
-		server http.Server
-	)
-	mux.HandleFunc("/", root)
-	mux.HandleFunc("/version", version)
-	if certFile == `` || keyFile == `` {
-		log.Println("h2c listen", addr)
-		server.Handler = h2c.NewHandler(mux, &http2.Server{})
-		e = server.Serve(l)
-	} else {
-		log.Println("h2 listen", addr)
-		server.Handler = mux
-		e = server.ServeTLS(l, certFile, keyFile)
-	}
-	if e != nil {
-		log.Fatalln(e)
-	}
-}
-func readerJSON(w http.ResponseWriter, r *http.Request, obj any) {
-	b, e := json.MarshalIndent(obj, "", "\t")
-	if e != nil {
-		log.Println(e)
-		w.Header().Set(`Content-Type`, `text/plain; charset=utf-8`)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(e.Error()))
+	} else if url != `` {
+		connect(url)
 		return
 	}
-	log.Println(r.Method, r.URL.Path, string(b))
-	w.Header().Set(`Content-Type`, `application/json`)
-	w.Write(b)
-}
-func version(w http.ResponseWriter, r *http.Request) {
-	readerJSON(w, r, map[string]any{
-		"platform": fmt.Sprintf(`%s %s %s`,
-			runtime.GOOS, runtime.GOARCH,
-			runtime.Version(),
-		),
-		"version": Version,
-	})
-}
-func root(w http.ResponseWriter, r *http.Request) {
-	writer := bufio.NewWriterSize(io.MultiWriter(os.Stdout, w), 1024*32)
-	writer.WriteString(fmt.Sprintln(r.Proto, time.Now()))
-	writer.WriteString(`- method: ` + r.Method + "\n")
-	writer.WriteString(`- host: ` + r.Host + "\n")
-	writer.WriteString(`- url: ` + r.URL.String() + "\n")
-	values := r.URL.Query()
-	if len(values) != 0 {
-		writer.WriteString("- query: \n")
-		for k, v := range values {
-			writer.WriteString(fmt.Sprintf("%s=%v\n", k, v))
+	var srvs []*Server
+	if h2c != `` {
+		srv, e := NewHTTP(h2c)
+		if e != nil {
+			log.Fatalln(e)
 		}
+		srvs = append(srvs, srv)
+		log.Println("h2c listen", h2c)
 	}
-	header := r.Header
-	if len(header) != 0 {
-		writer.WriteString("- header: \n")
-		for k, v := range header {
-			writer.WriteString(fmt.Sprintf("%s=%v\n", k, v))
+	if h2 != `` {
+		srv, e := NewHTTPS(h2, certFile, keyFile)
+		if e != nil {
+			log.Fatalln(e)
 		}
+		srvs = append(srvs, srv)
+		log.Println("h2 listen", h2)
 	}
-	writer.Flush()
-	if r.Body != nil {
-		writer.WriteString("- body: \n")
-		io.Copy(writer, r.Body)
-		writer.WriteString("\n")
-		writer.Flush()
+	if len(srvs) == 0 {
+		flag.PrintDefaults()
+		os.Exit(1)
+		return
+	}
+	var wait sync.WaitGroup
+	for _, srv := range srvs {
+		wait.Add(1)
+		go func(s *Server) {
+			e := s.Serve()
+			if e != nil {
+				log.Fatalln(e)
+			}
+			wait.Done()
+		}(srv)
+	}
+	wait.Wait()
+}
+func connect(url string) {
+	dialer := websocket.Dialer{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+		},
+	}
+	c, _, e := dialer.Dial(url, nil)
+	if e != nil {
+		log.Fatalln(e)
+	}
+	defer c.Close()
+	go func() {
+		t := websocket.TextMessage
+		var send []byte
+		r := bufio.NewReader(os.Stdin)
+		for {
+			s, e := r.ReadString('\n')
+			if e != nil {
+				break
+			}
+			s = s[:len(s)-1]
+			if s == `help` || s == `h` {
+				fmt.Println(`# set send type
+# * 1 TextMessage
+# * 2 BinaryMessage
+# * 8 CloseMessage
+# * 9 PingMessage
+# * 10 PongMessage
+type=1
+
+# send data from text
+text=abc
+# send data from hex
+hex=123456
+# send data from hex
+base64=abc`)
+				continue
+			}
+			if strings.HasPrefix(s, `type=`) {
+				s = s[len(`type=`):]
+				switch s {
+				case "1":
+					t = websocket.TextMessage
+					fmt.Println(`change send type to TextMessage`)
+				case "2":
+					t = websocket.BinaryMessage
+					fmt.Println(`change send type to BinaryMessage`)
+				case "8":
+					t = websocket.CloseMessage
+					fmt.Println(`change send type to CloseMessage`)
+				case "9":
+					t = websocket.PingMessage
+					fmt.Println(`change send type to PingMessage`)
+				case "10":
+					t = websocket.PongMessage
+					fmt.Println(`change send type to PongMessage`)
+				default:
+					fmt.Println(`unknow message type: ` + s)
+				}
+				continue
+			}
+			if strings.HasPrefix(s, `hex=`) {
+				s = s[len(`hex=`):]
+				send, e = hex.DecodeString(s)
+				if e != nil {
+					fmt.Println(e)
+					continue
+				}
+			} else if strings.HasPrefix(s, `base64=`) {
+				s = s[len(`base64=`):]
+				if strings.HasSuffix(s, `=`) {
+					send, e = base64.StdEncoding.DecodeString(s)
+				} else {
+					send, e = base64.RawStdEncoding.DecodeString(s)
+				}
+				if e != nil {
+					fmt.Println(e)
+					continue
+				}
+			} else if strings.HasPrefix(s, `text=`) {
+				send = []byte(s[len(`text=`):])
+			} else {
+				fmt.Println(`unknown command, use 'help' or 'h' display help info`)
+				continue
+			}
+			switch t {
+			case websocket.TextMessage, websocket.PingMessage, websocket.PongMessage:
+				log.Println(`send:`, t, string(send))
+			default:
+				log.Println(`send:`, t, send)
+			}
+			e = c.WriteMessage(t, send)
+			if e != nil {
+				break
+			}
+		}
+	}()
+	for {
+		t, p, e := c.ReadMessage()
+		if e != nil {
+			log.Fatalln(e)
+		}
+		switch t {
+		case websocket.TextMessage, websocket.PingMessage, websocket.PongMessage:
+			log.Println(`recv:`, t, string(p))
+		default:
+			log.Println(`recv:`, t, p)
+		}
 	}
 }
