@@ -39,6 +39,7 @@ function __my_docker_tools_
 }
 complete -F __my_docker_tools_ base_docker.sh
 complete -F __my_docker_tools_ tools_docker.sh
+complete -F __my_docker_tools_ auto_docker.sh
 
 echo load base-completion success
 export MY_DOCKER_TOOLS_BASH_COMPLETION=1
