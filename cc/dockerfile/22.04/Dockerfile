@@ -10,14 +10,12 @@ RUN set -eux; \
     rm /a.tar.gz;
 
 
-# # 安裝開發用到的庫和工具
-# RUN set -eux; \
-#     # 安裝 vscode 插件
-#     gosu dev /opt/code-server/bin/code-server --install-extension heptio.Jsonnet; \
-#     gosu dev /opt/code-server/bin/code-server --install-extension zxh404.vscode-proto3; \
-#     gosu dev /opt/code-server/bin/code-server --install-extension golang.Go; \
-#     # 刪除安裝緩存
-#     rm /home/dev/.cache -rf; 
+# 安裝開發用到的庫和工具
+RUN set -eux; \
+    # 安裝 vscode 插件
+    gosu dev /opt/code-server/bin/code-server --install-extension mads-hartmann.bash-ide-vscode; \
+    # 刪除安裝緩存
+    rm /home/dev/.cache -rf; 
 
 # code-server 用戶設定
 RUN set -eux; \
