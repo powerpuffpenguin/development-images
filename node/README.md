@@ -37,6 +37,35 @@ PUID 和 PGID 環境變量，這樣容器也會初次運行時自動將容器中
 
 ```
 services:
+  code:
+    image: king011/dev-node:18.14.0
+    restart: always
+    ports:
+      # 訪問 http://127.0.0.1:9090 設置啓動 xray 更新代理等 ...
+      - "9090:80/tcp"
+      # 訪問 http://127.0.0.1:9000 打開 code-server 進行代碼編寫
+      - "9000:8080/tcp"
+      # ng serve --disable-host-check --host 0.0.0.0
+      # 訪問 http://127.0.0.1:4200 查看 angular 開發實時效果
+      - "4200:4200/tcp"
+    volumes:
+      # 將本地代理目錄 掛接到容器中 
+      - ./project:/home/dev/project
+    environment:
+      - BIND_ADDR=0.0.0.0:8080
+      # 設置上密碼驗證，這樣即時你不在自己電腦旁邊也可以打開瀏覽器遠程開發
+      - AUTH=password
+      # 如果要遠程開發將密碼設置複雜點，並且推薦設置 https，這裏只是演示設置了很簡單的密碼
+      - PASSWORD=123
+  # xray 容器用於管理網路，設置透明代理，突破朝鮮網路封鎖
+  xray:
+    image: king011/v2ray-web:v1.7.4
+    restart: always
+    cap_add: # 設置上這兩個特權才能在容器中使用 iptables 設置透明代理
+      - NET_ADMIN
+      - NET_RAW
+    # 接管 code 的網路
+    network_mode: service:code
 ```
 
 上面開了 xray 和 code 兩個容器
