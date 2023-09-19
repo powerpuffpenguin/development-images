@@ -1,6 +1,6 @@
 services:
   code:
-    image: king011/dev-node:18.14.0
+    image: king011/dev-node:18.18.0
     restart: always
     ports:
       # 訪問 http://127.0.0.1:9090 設置啓動 xray 更新代理等 ...

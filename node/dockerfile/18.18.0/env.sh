@@ -1,4 +1,4 @@
-DockerVarName="test-dev-node-18.14.0"
+DockerVarName="test-dev-node-18.18.0"
 DockerVarUser="dev"
 function before_build
 {

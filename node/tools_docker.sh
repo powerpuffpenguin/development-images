@@ -10,7 +10,7 @@ ProjectDir=`pwd`
 
 # 設置環境
 Docker="king011/dev-node" # 發佈名稱
-DefaultTag=18.14.0 # 默認版本
+DefaultTag=18.18.0 # 默認版本
 Dockerfile="`pwd`/dockerfile" # 設置 dockerfile 檔案夾
 
 # 加載腳本
