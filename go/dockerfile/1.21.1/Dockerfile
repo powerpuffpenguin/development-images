@@ -1,17 +1,14 @@
-# 3.07G
-FROM king011/dev-go-base:22.04
+# 2.15G
+FROM king011/dev-go-base:18.04
 
-# 3.93G
 RUN set -eux; \
     # 安裝 golang
-    # 3.53G - 3.07G = 460M
     curl -#Lo /a.tar.gz https://go.dev/dl/go1.21.1.linux-amd64.tar.gz; \
     mkdir /opt/google; \
     tar -zxvf /a.tar.gz -C /opt/google; \
     rm /a.tar.gz; \
 	mkdir /opt/google/golib; \
     # 安裝 code-server 用於編寫代碼
-    # 3.93G - 3.53G = 400 M
     curl -#Lo /a.tar.gz https://github.com/coder/code-server/releases/download/v4.9.1/code-server-4.9.1-linux-amd64.tar.gz; \
     tar -zxvf /a.tar.gz -C /opt/; \
     mv /opt/code-server-4.9.1-linux-amd64 /opt/code-server;\
