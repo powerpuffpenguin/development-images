@@ -15,5 +15,6 @@
 - [auto](auto/README.md)
 - [certbot](certbot/README.md)
 - [httptest](httptest/README.md)
+- [frp](frp/README.md)
 - [dev](dev/README.md)
 - [go](go/README.md)
