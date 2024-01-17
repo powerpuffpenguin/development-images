@@ -10,9 +10,9 @@ RUN set -eux; \
     rm /a.tar.xz; \
     mv /opt/node-v20.11.0-linux-x64 /opt/node; \
     # 安裝 code-server 用於編寫代碼
-    curl -#Lo /a.tar.gz https://github.com/coder/code-server/releases/download/v4.9.1/code-server-4.9.1-linux-amd64.tar.gz; \
+    curl -#Lo /a.tar.gz https://github.com/coder/code-server/releases/download/v4.20.0/code-server-4.20.0-linux-amd64.tar.gz; \
     tar -zxvf /a.tar.gz -C /opt/; \
-    mv /opt/code-server-4.9.1-linux-amd64 /opt/code-server;\
+    mv /opt/code-server-4.20.0-linux-amd64 /opt/code-server;\
     rm /a.tar.gz;
 
 # 爲 node 設置環境變量
@@ -27,7 +27,8 @@ RUN set -eux; \
 
 # 爲 code-server 安裝插件
 RUN set -eux; \
-    gosu dev /opt/code-server/bin/code-server --install-extension Angular.ng-template
+    gosu dev /opt/code-server/bin/code-server --install-extension Angular.ng-template; \
+    gosu dev /opt/code-server/bin/code-server --install-extension heptio.Jsonnet; 
 
 # code-server 用戶設定
 RUN set -eux; \
