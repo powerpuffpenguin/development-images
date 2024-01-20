@@ -3,7 +3,7 @@
 | env         | version  |
 | ----------- | -------- |
 | ubuntu      | 22.04    |
-| code-server | v4.9.1   |
+| code-server | v4.20.0  |
 | node        | v20.11.0 |
 | npm         | 10.3.0   |
 | typescript  | 5.3.3    |

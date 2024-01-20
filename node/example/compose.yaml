@@ -11,7 +11,7 @@ services:
       # 訪問 http://127.0.0.1:4200 查看 angular 開發實時效果
       - "4200:4200/tcp"
     volumes:
-      # 將本地代理目錄 掛接到容器中 
+      # 將本地項目目錄 掛接到容器中 
       - ./project:/home/dev/project
     environment:
       - BIND_ADDR=0.0.0.0:8080
