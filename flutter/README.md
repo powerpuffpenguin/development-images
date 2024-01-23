@@ -35,7 +35,7 @@ services:
       - $HOME/volumes/flutter/home:/home/dev
 
       # 將本地項目目錄 掛接到容器中 
-      - ./project:/project
+      - ./project:/home/dev/project
     environment:
       # 設置 X11
       - DISPLAY=$DISPLAY
