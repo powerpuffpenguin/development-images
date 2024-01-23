@@ -88,11 +88,11 @@ RUN set -eux; \
 
 
 # 項目根路徑
-VOLUME ["/project"]
+VOLUME ["/home/dev/project"]
 # code-server 默認端口
 EXPOSE 80
 
-WORKDIR /project
+WORKDIR /home/dev
 
 # 設置環境變量
 ENV \

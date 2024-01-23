@@ -154,7 +154,6 @@ if [[ "$@" == "default-command" ]];then
         gosu dev mkdir /home/dev/.config/code-server -p
         gosu dev cp /configure/config.yaml /home/dev/.config/code-server/config.yaml
     fi
-    chown dev.dev /project
     exec_serve
 else
     exec "$@"

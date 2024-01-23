@@ -58,3 +58,37 @@ services:
     # 接管 code 的網路
     network_mode: service:code
 ```
+
+# android emulator
+
+- 對於 linux 宿主機可以直接將 kvm 映射到容器來啓動 android
+  emulator，但這無法使用硬件加速，速度會比較慢
+- 對於 windows 宿主機，無法在容器中啓用 android emulator
+
+對於這一問題最好的解決方法是在宿主機中啓動 android emulator，容器中建立 tcp
+隧道直接在遠程 emulator 中進行調試。
+
+emulator 啓動會創建兩個 tcp 隧道
+
+- 監聽 :5555(默認) 端口供 adb 連接測試
+- 向 127.0.0.1:5037(默認) 的 adb 服務註冊自己
+
+所以只需要把宿主機的 127.0.0.1:5037 映射到容器(emulator
+向容器中的adb服務註冊)，並把容器的 :5555
+端口映射到宿主機(容器adb將連接宿主機的emulator)。
+
+你可以在容器中使用下述指令創建端口映射
+
+```
+ssh -N -R 127.0.0.1:5037:127.0.0.1:5037 -L 127.0.0.1:5555:127.0.0.1:5555 Your_Host_User@Your_Host_IP
+```
+
+你可以使用下述兩個指令，來驗證 adb 是否識別到了遠程的 emulator
+
+```
+# 查詢 android 設備
+adb devices
+
+# 查詢 flutter 支持的設備
+flutter devices
+```
