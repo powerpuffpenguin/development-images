@@ -152,13 +152,13 @@ services:
     # 接管 code 的網路
     network_mode: service:code
   streamf:
-    image: king011/streamf:v0.0.1
+    image: king011/streamf:v0.0.2
     restart: always
     volumes:
       - ./streamf.jsonnet:/data/streamf.jsonnet:ro
     network_mode: service:code
   host:
-    image: king011/streamf:v0.0.1
+    image: king011/streamf:v0.0.2
     restart: always
     volumes:
       - ./host.jsonnet:/data/streamf.jsonnet:ro
