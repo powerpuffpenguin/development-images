@@ -1,4 +1,6 @@
-# node
+# flutter
+
+[github](https://github.com/powerpuffpenguin/development-images/tree/main/flutter)
 
 這裏打包了 flutter 開發環境，使用 code-server 進行代碼編輯
 
@@ -63,7 +65,7 @@ services:
 
 - 對於 linux 宿主機可以直接將 kvm 映射到容器來啓動 android
   emulator，但這無法使用硬件加速，速度會比較慢
-- 對於 windows 宿主機，無法在容器中啓用 android emulator
+- 對於 windows 宿主機，無法在容器中使用 android emulator
 
 對於這一問題最好的解決方法是在宿主機中啓動 android emulator，容器中建立 tcp
 隧道直接在遠程 emulator 中進行調試。
@@ -184,6 +186,14 @@ local timeout = '1s';
   },
   dialer: [
     {
+      tag: 'dialer_android',
+      timeout: timeout,
+      url: 'basic://',
+      network: 'pipe',
+      addr: 'pipe-l/android.socket',
+      retry: 2,
+    },
+    {
       tag: 'dialer_adb',
       timeout: timeout,
       url: 'basic://127.0.0.1:5037',
@@ -203,6 +213,23 @@ local timeout = '1s';
     {
       network: 'tcp',
       addr: ':8000',
+      mode: 'http',
+      router: [
+        {
+          method: 'WS',
+          pattern: '/dev/android',
+          access: 'any token, but listener and dialer must matched. allow empty too.',
+          dialer: {
+            tag: 'dialer_android',
+            close: '1s',
+          },
+        },
+      ],
+    },
+  ] + [
+    {
+      network: 'pipe',
+      addr: 'pipe-l/android.socket',
       mode: 'http',
       router: [
         {
@@ -248,7 +275,7 @@ emulator)或宿主機是 windwos 則可以刪除 host 容器，但需要在運�
 ```
 local ports = std.range(5552, 5555);
 local timeout = '1s';
-local baseURL = 'http://10.89.1.20:8000';
+local addr = '10.89.1.20:8000';
 {
   logger: {
     level: 'info',
@@ -260,10 +287,19 @@ local baseURL = 'http://10.89.1.20:8000';
   },
   dialer: [
     {
+      tag: 'dialer_android',
+      timeout: timeout,
+      url: 'ws://' + addr + '/dev/android',
+      access: 'any token, but listener and dialer must matched. allow empty too.',
+      retry: 2,
+    },
+    {
       tag: 'dialer_adb',
       timeout: timeout,
-      url: baseURL + '/adb',
+      url: 'http://abc.com/adb',
       method: 'POST',
+      network: 'pipe',
+      addr: 'pip-c/android.socket',
       retry: 2,
     },
   ] + [
@@ -278,8 +314,10 @@ local baseURL = 'http://10.89.1.20:8000';
   bridge: [
     {
       timeout: timeout,
-      url: baseURL + '/emulator/' + port,
+      url: 'http://abc.com/emulator/' + port,
       method: 'POST',
+      network: 'pipe',
+      addr: 'pip-c/android.socket',
       dialer: {
         tag: 'emulator_' + port,
         close: '1s',
@@ -288,6 +326,14 @@ local baseURL = 'http://10.89.1.20:8000';
     for port in ports
   ],
   listener: [
+    {
+      network: 'pipe',
+      addr: 'pip-c/android.socket',
+      dialer: {
+        tag: 'dialer_android',
+        close: '1s',
+      },
+    },
     {
       network: 'tcp',
       addr: ':5037',
