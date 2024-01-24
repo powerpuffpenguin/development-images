@@ -1,6 +1,6 @@
 # go
 
-這裏打包了 golang 開發環境，使用 code-server 進行代碼編輯
+這裏打包了 c++ 開發環境，使用 code-server 進行代碼編輯
 
 # 初始化
 
@@ -38,7 +38,7 @@ PUID 和 PGID 環境變量，這樣容器也會初次運行時自動將容器中
 ```
 services:
   code:
-    image: king011/dev-go:1.19.5
+    image: king011/dev-cc:22.04
     restart: always
     ports:
       # 訪問 http://127.0.0.1:9090 設置啓動 xray 更新代理等 ...

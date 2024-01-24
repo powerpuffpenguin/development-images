@@ -1,3 +1,9 @@
+# Deprecated
+
+不再維護，請直接使用
+[v2ray](https://github.com/v2fly)/[xray](https://github.com/xtls/xray-core) 或
+[streamf](https://github.com/powerpuffpenguin/streamf)
+
 # frp
 
 這裏打包了
