@@ -72,13 +72,24 @@ RUN set -eux; \
 # code-server 用戶設定
 RUN set -eux; \
     echo '{' > /home/dev/.local/share/code-server/User/settings.json; \
-    echo '    "jsonnet.outputFormat": "json",' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "files.associations": {' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '        "*.json": "jsonc"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "*.arb": "json"' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    },' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "editor.formatOnSave": true,' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "editor.fontSize": 24,' >> /home/dev/.local/share/code-server/User/settings.json; \
-    echo '    "workbench.colorTheme": "Default Dark+"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "workbench.colorTheme": "Default Dark+",' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "[dart]": {' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.formatOnSave": true,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.formatOnType": true,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.rulers": [' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '            80' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        ],' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.selectionHighlight": false,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.suggestSelection": "first",' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.tabCompletion": "onlySnippets",' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "editor.wordBasedSuggestions": "off"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    }' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '}' >> /home/dev/.local/share/code-server/User/settings.json; \
     chown dev.dev  /home/dev/.local/share/code-server/User/settings.json; \
     # 備份初始化用戶數據
