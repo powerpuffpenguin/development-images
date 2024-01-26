@@ -73,7 +73,7 @@ RUN set -eux; \
 RUN set -eux; \
     echo '{' > /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "files.associations": {' >> /home/dev/.local/share/code-server/User/settings.json; \
-    echo '        "*.json": "jsonc"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '        "*.json": "jsonc",' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '        "*.arb": "json"' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    },' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "editor.formatOnSave": true,' >> /home/dev/.local/share/code-server/User/settings.json; \
