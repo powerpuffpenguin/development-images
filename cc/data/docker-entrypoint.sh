@@ -46,7 +46,7 @@ function exec_serve
 {
     local args=(
         gosu dev
-        /opt/code-server/bin/code-server
+        /opt/code-server/bin/code-server --disable-update-check
     )
 
     declare -i i=3
