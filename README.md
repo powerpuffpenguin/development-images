@@ -15,7 +15,6 @@
 - [auto](auto/README.md)
 - [certbot](certbot/README.md)
 - [httptest](httptest/README.md)
-- [frp](frp/README.md) (Deprecated)
 - [dev](dev/README.md)
 - [go](go/README.md)
 - [node](node/README.md)

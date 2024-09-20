@@ -9,8 +9,8 @@ cd `dirname $BASH_SOURCE`
 ProjectDir=`pwd`
 
 # 設置環境
-Docker="king011/frp" # 發佈名稱
-DefaultTag=0.52.0 # 默認版本
+Docker="king011/phantun" # 發佈名稱
+DefaultTag=0.6.0 # 默認版本
 Dockerfile="`pwd`/dockerfile" # 設置 dockerfile 檔案夾
 
 # 加載腳本
