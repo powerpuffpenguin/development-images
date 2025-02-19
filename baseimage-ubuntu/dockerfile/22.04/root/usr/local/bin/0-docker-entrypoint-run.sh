@@ -1,8 +1,8 @@
 #!/bin/sh
 while true; do
-    "$2"
+    "$1"
     if [ "$?" = 0 ];then
         break
     fi
-    sleep 1
+    sleep $RESTART_INTERVAL_SECOND
 done

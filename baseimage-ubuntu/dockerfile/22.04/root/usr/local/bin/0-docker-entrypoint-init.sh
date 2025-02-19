@@ -1,6 +1,25 @@
 #!/bin/bash
 set -e
+exec_default_uid_gid(){
+    if [ `id -u` = 0 ];then
+        grep -vw "^abc" /etc/group > /tmp/fix
+        echo "abc:x:$PGID:" >> /tmp/fix
+        mv /tmp/fix /etc/group
+        grep -vw "^abc" /etc/passwd > /tmp/fix
+        echo "abc:x:$PUID:$PGID::$PHOME:/bin/bash" >> /tmp/fix
+        mv /tmp/fix /etc/passwd
 
+        if [ "$PHOME" = "" ];then
+            return 0
+        fi
+        if [ -d "$PHOME" ];then
+            chown "$PUID:$PGID" "$PHOME"
+        else
+            mkdir -p "$PHOME"
+            chown "$PUID:$PGID" "$PHOME"
+        fi
+    fi
+}
 exec_default_step(){
     if [ -d /etc/init.setup.d ];then
         local ifs=$IFS
@@ -40,15 +59,28 @@ exec_default_run(){
                         if [ "$?" = 0 ];then
                             return
                         fi
-                        sleep 1
+                        sleep $RESTART_INTERVAL_SECOND
                     done
                 done
             ;;
             *)
                 local pid
+                local index=0
                 for file in "${files[@]}";do
-                    0-docker-entrypoint-run.sh "$$" "$file" &
-                    pid="$pid $!"
+                    index=$((index+1))
+                    if [ $index = $i ];then
+                        set +e
+                        while true; do
+                        "$file"
+                        if [ "$?" = 0 ];then
+                            return
+                        fi
+                        sleep $RESTART_INTERVAL_SECOND
+                    done
+                    else
+                        0-docker-entrypoint-run.sh "$file" &
+                        pid="$pid $!"
+                    fi
                 done
                 for file in $pid;do
                     wait $file
@@ -57,6 +89,7 @@ exec_default_run(){
         esac
     fi
 }
+exec_default_uid_gid
 case "$@" in
     default-command)
         exec_default_step

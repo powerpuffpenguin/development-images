@@ -11,9 +11,13 @@ RUN set -eux; \
     # 刪除緩存
     rm -rf /var/lib/apt/lists/* ; \
     # 命令執行 用戶
-    useradd -m -U -s /bin/bash abc;
+    useradd -s /bin/bash abc;
 
 Copy root/ /
+
+ENV PUID=911 PGID=911 RESTART_INTERVAL_SECOND=5 PHOME=
+
+ENV PUID=1000 PGID=1000 PHOME=/config
 
 ENTRYPOINT ["0-docker-entrypoint-init.sh"]
 # CMD ["default-setup"] # 只執行 /etc/init.setup.d 中的配置腳本
