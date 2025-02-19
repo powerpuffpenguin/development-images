@@ -56,9 +56,9 @@ exec_default_run(){
                 for file in "${files[@]}";do
                     while true; do
                         "$file"
-                        if [ "$?" = 0 ];then
-                            return
-                        fi
+                        # if [ "$?" = 0 ];then
+                        #     return
+                        # fi
                         sleep $RESTART_INTERVAL_SECOND
                     done
                 done
@@ -72,9 +72,9 @@ exec_default_run(){
                         set +e
                         while true; do
                         "$file"
-                        if [ "$?" = 0 ];then
-                            return
-                        fi
+                        # if [ "$?" = 0 ];then
+                        #     return
+                        # fi
                         sleep $RESTART_INTERVAL_SECOND
                     done
                     else

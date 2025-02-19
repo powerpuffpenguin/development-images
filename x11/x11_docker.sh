@@ -2,7 +2,7 @@
 set -e
 
 # 設置顯示的命令名稱
-CommandName="auto_x11.sh"
+CommandName="x11_docker.sh"
 
 # 項目根路徑
 cd `dirname $BASH_SOURCE`

@@ -1,38 +1,56 @@
 FROM ubuntu:22.04
-# # 102M
-# RUN set -eux; \
-#     apt-get update; \
-#     # 安裝 gosu, 80.9M - 77.8M = 3.1 M 
-#     apt-get install -y --no-install-recommends gosu; \
-#     # 驗證 gosu 可以正常工作
-# 	gosu --version; \
-# 	gosu nobody true; \
-#     # 安裝其它開發和測試工具
-#     apt-get install -y --no-install-recommends \
-#         # 87.7M - 80.9M = 6.8M, dnsutils 太大沒有打包大概 50m 左右 \
-#         tzdata ca-certificates bash-completion net-tools iputils-ping \
-#         # 96.2M - 87.7M = 8.5M , p7zip-full 大概有 5M 左右
-#         upx zip unzip xz-utils p7zip-full \
-#         # 102M - 96.2M = 5.8M, vim(60M) git(66M) 太大 不在此處打包
-#         # * sudo 2M
-#         # * proxychains 2M
-#         # * curl 5M
-#         # * wget 2M
-#         sudo proxychains curl wget \
-#         ; \
-#     # 刪除緩存
-#     rm -rf /var/lib/apt/lists/* ; \
-#     # 配置 proxy
-#     grep -v -w '^socks4' /etc/proxychains.conf > /tmp/conf; \
-#     echo 'socks5	127.0.0.1	1080' >> /tmp/conf; \
-#     mv /tmp/conf /etc/proxychains.conf
 
-# # 創建 命令執行 用戶
-# RUN set -eux; \
-# 	useradd -m -U -s /bin/bash dev; \
-# 	echo "dev ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers;
+# 安裝必備的基礎工具
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends gosu; \
+	gosu --version; \
+	gosu nobody true; \
+    # net-tools 也是 x11vnc 需要的
+    apt-get install -y --no-install-recommends tzdata bash-completion ca-certificates \
+        sudo curl \
+        upx zip unzip xz-utils p7zip-full \
+        vim iputils-ping net-tools; \
+    rm -rf /var/lib/apt/lists/* ;
 
-# Copy root/ /
+# 安裝虛擬桌面
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends xvfb  x11vnc fluxbox xterm; \
+    rm -rf /var/lib/apt/lists/* ;
 
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["default-command"]
+# 安裝 noVNC
+RUN set -eux; \
+    curl -#Lo /a.tar.gz https://github.com/novnc/noVNC/archive/refs/tags/v1.5.0.tar.gz; \
+    tar -zxvf /a.tar.gz -C /opt; \
+    rm /a.tar.gz; \
+    mv /opt/noVNC-1.5.0 /opt/noVNC; \
+    ln /opt/noVNC/vnc.html /opt/noVNC/index.html -s; \
+    rm -rf /opt/noVNC/docs /opt/noVNC/snap /opt/noVNC/tests; \
+    curl -#Lo /a.tar.gz https://github.com/powerpuffpenguin/streamf/releases/download/v0.0.7/streamf_linux_amd64.tar.gz; \
+    mkdir /opt/streamf; \
+    tar -zxvf /a.tar.gz -C /opt/streamf; \
+    rm /a.tar.gz; \
+    mv /opt/streamf/streamf /usr/local/bin/; \
+    rm -rf /opt/streamf;
+
+
+# 創建用戶
+RUN set -eux; \
+	useradd -m -U -s /bin/bash abc; \
+	echo "abc ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers;
+
+Copy root/ /
+
+ENV PHOME=/home/abc PUID=1000 PGID=1000 \
+    RESTART_INTERVAL_SECOND=5 DISPLAY=:0 \
+    LANG=zh_CN.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    TZ=Asia/Taipei
+
+WORKDIR /home/abc
+
+ENTRYPOINT ["0-docker-entrypoint-init.sh"]
+# CMD ["default-setup"] # 只執行 /etc/init.setup.d 中的配置腳本
+# CMD ["default-run"] # 只執行 /etc/init.run.d 中的進程腳本不在返回 非0 時自動重啓
+CMD ["default-command"] # default-setup + default-run
