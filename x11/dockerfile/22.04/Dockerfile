@@ -8,7 +8,7 @@ RUN set -eux; \
 	gosu nobody true; \
     # net-tools 也是 x11vnc 需要的
     apt-get install -y --no-install-recommends tzdata bash-completion ca-certificates \
-        sudo curl \
+        sudo curl gpg\
         upx zip unzip xz-utils p7zip-full \
         vim iputils-ping net-tools; \
     rm -rf /var/lib/apt/lists/* ;
@@ -16,7 +16,7 @@ RUN set -eux; \
 # 安裝虛擬桌面
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y --no-install-recommends xvfb  x11vnc fluxbox xterm; \
+    apt-get install -y --no-install-recommends xvfb x11vnc fluxbox xfce4-terminal; \
     rm -rf /var/lib/apt/lists/* ;
 
 # 安裝 noVNC
@@ -34,6 +34,25 @@ RUN set -eux; \
     mv /opt/streamf/streamf /usr/local/bin/; \
     rm -rf /opt/streamf;
 
+# 安裝中文環境
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends fonts-noto-cjk language-pack-zh-hans \
+        dbus-x11 ibus-rime; \
+    rm -rf /var/lib/apt/lists/* ;
+
+# # 安裝 wine
+# RUN set -eux; \
+#     dpkg --add-architecture i386; \
+#     mkdir -pm755 /etc/apt/keyrings; \
+#     curl -#Lo /winehq.key https://dl.winehq.org/wine-builds/winehq.key; \
+#     gpg --dearmor -o /etc/apt/keyrings/winehq-archive.key /winehq.key; \
+#     rm /winehq.key; \
+#     curl -#Lo /etc/apt/sources.list.d/winehq-jammy.sources https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources; \
+#     apt-get update; \
+#     apt-get install -y --no-install-recommends --install-recommends winehq-stable; \
+#     rm -rf /var/lib/apt/lists/* ;
+
 
 # 創建用戶
 RUN set -eux; \
@@ -45,8 +64,8 @@ Copy root/ /
 ENV PHOME=/home/abc PUID=1000 PGID=1000 \
     RESTART_INTERVAL_SECOND=5 \
     DISPLAY=:0 SCREEN_MODE=1366x768x24 \
-    LANG=zh_CN.UTF-8 \
-    LC_ALL=C.UTF-8 \
+    LANG=zh_TW.UTF-8 \
+    LC_ALL=zh_TW.UTF-8 \
     TZ=Asia/Taipei
 
 WORKDIR /home/abc
