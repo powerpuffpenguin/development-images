@@ -43,7 +43,8 @@ RUN set -eux; \
 Copy root/ /
 
 ENV PHOME=/home/abc PUID=1000 PGID=1000 \
-    RESTART_INTERVAL_SECOND=5 DISPLAY=:0 \
+    RESTART_INTERVAL_SECOND=5 \
+    DISPLAY=:0 SCREEN_MODE=1366x768x24 \
     LANG=zh_CN.UTF-8 \
     LC_ALL=C.UTF-8 \
     TZ=Asia/Taipei
