@@ -17,8 +17,6 @@ Copy root/ /
 
 ENV PUID=911 PGID=911 RESTART_INTERVAL_SECOND=5 PHOME=
 
-ENV PUID=1000 PGID=1000 PHOME=/config
-
 ENTRYPOINT ["0-docker-entrypoint-init.sh"]
 # CMD ["default-setup"] # 只執行 /etc/init.setup.d 中的配置腳本
 # CMD ["default-run"] # 只執行 /etc/init.run.d 中的進程腳本不在返回 非0 時自動重啓
