@@ -20,13 +20,19 @@ else
     sudo chown dev:dev /data
 fi
 
-case "$@" in
-    default-command)
-        while true; do
-            sleep 3600
-        done
+case "$1" in
+    yt-dlp)
+        export PATH="/home/dev/.local/bin:$PATH"
+        gosu dev "$@"
     ;;
     *)
-        exec "$@"
+        if [[ "$@" == sleep ]];then
+            while true; do
+                echo "`date`"
+                sleep 3600
+            done
+        else
+            exec "$@"
+        fi
     ;;
 esac
