@@ -1,4 +1,0 @@
-#!/bin/sh
-exec /usr/bin/Xvfb :0 \
-    -screen 0 \
-    "$SCREEN_MODE"

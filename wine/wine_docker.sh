@@ -2,14 +2,14 @@
 set -e
 
 # 設置顯示的命令名稱
-CommandName="x11_docker.sh"
+CommandName="wine_docker.sh"
 
 # 項目根路徑
 cd `dirname $BASH_SOURCE`
 ProjectDir=`pwd`
 
 # 設置環境
-Docker="king011/x11" # 發佈名稱
+Docker="king011/wine" # 發佈名稱
 DefaultTag=22.04 # 默認版本
 Dockerfile="`pwd`/dockerfile" # 設置 dockerfile 檔案夾
 
