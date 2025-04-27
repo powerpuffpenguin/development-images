@@ -10,9 +10,10 @@ function docker_run
     sudo docker run --rm \
         -it \
         -u dev \
+        --privileged  \
         --name "$2" \
         --cpus 2 \
-        -m 2g \
+        -m 4g \
         -e "DISPLAY=$DISPLAY" \
         -v /tmp/.X11-unix:/tmp/.X11-unix \
         -v /dev/dri:/dev/dri \
