@@ -45,7 +45,10 @@ RUN set -eux; \
     echo '    },' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "editor.formatOnSave": true,' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '    "editor.fontSize": 24,' >> /home/dev/.local/share/code-server/User/settings.json; \
-    echo '    "workbench.colorTheme": "Default Dark+"' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "editor.stickyScroll.enabled": false,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "workbench.colorTheme": "Default Dark+",' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "window.commandCenter": false,' >> /home/dev/.local/share/code-server/User/settings.json; \
+    echo '    "workbench.layoutControl.enabled": false' >> /home/dev/.local/share/code-server/User/settings.json; \
     echo '}' >> /home/dev/.local/share/code-server/User/settings.json; \
     chown dev.dev  /home/dev/.local/share/code-server/User/settings.json;
 
