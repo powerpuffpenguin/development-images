@@ -1,9 +1,0 @@
-#!/bin/sh
-exec /usr/bin/x11vnc  \
-    -forever \
-    -noxdamage \
-    -repeat \
-    -shared \
-    -rfbauth /etc/x11vnc \
-    -unixsock /tmp/x11vnc.socket \
-    -listen 127.0.0.1

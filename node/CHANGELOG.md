@@ -1,3 +1,15 @@
+# 22.15.0
+
+| env         | version |
+| ----------- | ------- |
+| ubuntu      | 22.04   |
+| code-server | v4.99.3 |
+| node        | 22.15.0 |
+| npm         | 11.3.0  |
+| typescript  | 5.8.3   |
+| angular     | 19.2.9  |
+| qunit       | 2.24.1  |
+
 # 20.11.0
 
 | env         | version  |

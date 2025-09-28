@@ -1,2 +1,0 @@
-#!/bin/sh
-exec bash -c "gosu abc /usr/bin/fluxbox"
