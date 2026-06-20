@@ -1,3 +1,15 @@
+# 3.44.2
+
+| env         | version    |
+| ----------- | ---------- |
+| ubuntu      | 24.04      |
+| code-server | v4.104.2   |
+| flutter     | 3.44.2     |
+| openjdk     | 21         |
+| sdkmanager  | 12.0       |
+| build-tools | 35.0.0     |
+| platforms   | android-35 |
+
 # 3.35.4
 
 | env         | version    |

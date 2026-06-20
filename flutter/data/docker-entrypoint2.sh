@@ -70,7 +70,7 @@ function set_uid
 function change_owner_dir
 {
     if [[ -d "$1" ]];then
-        if ! ls "$1" -l | egrep -wq "dev[ ]+dev";then
+        if ! ls "$1" -ld | egrep -wq "dev[ ]+dev";then
             chown dev:dev "$1" -R
         fi
     fi
