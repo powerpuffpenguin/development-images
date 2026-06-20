@@ -80,7 +80,8 @@ RUN set -eux; \
 
 # 安裝 code-server 插件
 RUN set -eux; \
-    gosu dev /opt/code-server/bin/code-server --install-extension Dart-Code.flutter; 
+    gosu dev /opt/code-server/bin/code-server --install-extension Dart-Code.flutter; \
+    gosu dev /opt/code-server/bin/code-server --install-extension localizely.flutter-intl
 
 
 
