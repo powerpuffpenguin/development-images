@@ -1,5 +1,5 @@
 # 271M
-FROM king011/dev:22.04 
+FROM king011/dev:24.04 
 
 # 481M
 # 安裝 gcc 以支持 cgo 257M
